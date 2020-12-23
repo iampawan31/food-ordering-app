@@ -4,16 +4,10 @@ import {View, Text, Button, StyleSheet} from 'react-native';
 const ExploreScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
-      <Text>Detailscreen</Text>
+      <Text>Explore Screen</Text>
       <Button
         title="Go to details screen..."
-        onPress={() => navigation.push('Home')}
-      />
-      <Button title="Go to home" onPress={() => navigation.push('Home')} />
-      <Button title="Go back" onPress={() => navigation.push('Home')} />
-      <Button
-        title="Go to first screen"
-        onPress={() => navigation.popToTop()}
+        onPress={() => alert('clicked')}
       />
     </View>
   );

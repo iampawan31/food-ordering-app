@@ -4,17 +4,8 @@ import {View, Text, Button, StyleSheet} from 'react-native';
 const ProfileScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
-      <Text>Detailscreen</Text>
-      <Button
-        title="Go to details screen..."
-        onPress={() => navigation.push('Home')}
-      />
-      <Button title="Go to home" onPress={() => navigation.push('Home')} />
-      <Button title="Go back" onPress={() => navigation.push('Home')} />
-      <Button
-        title="Go to first screen"
-        onPress={() => navigation.popToTop()}
-      />
+      <Text>Profile Screen</Text>
+      <Button title="Click here" onPress={() => alert('Clicked')} />
     </View>
   );
 };
