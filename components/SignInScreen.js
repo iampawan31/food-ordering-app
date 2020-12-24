@@ -2,7 +2,6 @@ import React from 'react';
 import {
   View,
   Text,
-  Button,
   TextInput,
   StyleSheet,
   StatusBar,
@@ -13,6 +12,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
+import {AuthContext} from './context';
 
 const SignInScreen = ({navigation}) => {
   const [data, setData] = React.useState({
@@ -21,6 +21,8 @@ const SignInScreen = ({navigation}) => {
     checkTextInputChange: false,
     secureTextEntry: true,
   });
+
+  const {signIn} = React.useContext(AuthContext);
 
   const textInputChange = (value) => {
     if (value.length !== 0) {
@@ -44,6 +46,10 @@ const SignInScreen = ({navigation}) => {
 
   const updateSecureTextEntry = () => {
     setData({...data, secureTextEntry: !data.secureTextEntry});
+  };
+
+  const loginHandle = (username, password) => {
+    signIn(username, password);
   };
 
   return (
@@ -86,10 +92,23 @@ const SignInScreen = ({navigation}) => {
             />
           </TouchableOpacity>
         </View>
+        <TouchableOpacity>
+          <Text style={{color: '#009387', marginTop: 15}}>
+            Forgot Password?
+          </Text>
+        </TouchableOpacity>
         <View style={styles.button}>
-          <LinearGradient colors={['#08d4c4', '#01ab9d']} style={styles.signIn}>
-            <Text style={[styles.textSign, {color: '#fff'}]}>Sign In</Text>
-          </LinearGradient>
+          <TouchableOpacity
+            onPress={() => {
+              loginHandle(data.username, data.password);
+            }}
+            style={styles.signIn}>
+            <LinearGradient
+              style={styles.signIn}
+              colors={['#08d4c4', '#01ab9d']}>
+              <Text style={[styles.textSign, {color: '#fff'}]}>Sign In</Text>
+            </LinearGradient>
+          </TouchableOpacity>
           <TouchableOpacity
             style={[
               styles.signIn,

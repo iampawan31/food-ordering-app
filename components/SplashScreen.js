@@ -35,7 +35,7 @@ const SplashScreen = ({navigation}) => {
               colors={['#08d4c4', '#01ab9d']}
               style={styles.signIn}>
               <Text style={styles.textSign}>Get Started</Text>
-              <Icon name="chevron-forward-outline" color="#fff" size={2} />
+              <Icon name="chevron-forward-outline" color="#fff" size={20} />
             </LinearGradient>
           </TouchableOpacity>
         </View>
