@@ -11,6 +11,7 @@ import SettingScreen from './components/SettingScreen';
 import SupportScreen from './components/SupportScreen';
 import RootStackScreen from './components/RootStackScreen';
 import {AuthContext} from './components/context';
+import Users from './models/users';
 
 const Drawer = createDrawerNavigator();
 
@@ -51,15 +52,13 @@ const App = () => {
 
   const authContext = React.useMemo(
     () => ({
-      signIn: async (userName, password) => {
-        let userToken = null;
-        if (userName === 'user' && password === 'password') {
-          userToken = 'random_string';
-          try {
-            await AsyncStorage.setItem('userToken', userToken);
-          } catch (e) {
-            console.log(e);
-          }
+      signIn: async (foundUser) => {
+        let userToken = String(foundUser[0].userToken);
+        let userName = String(foundUser[0].email);
+        try {
+          await AsyncStorage.setItem('userToken', userToken);
+        } catch (e) {
+          console.log(e);
         }
 
         dispatch({type: 'LOGIN', id: userName, token: userToken});

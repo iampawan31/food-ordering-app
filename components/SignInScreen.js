@@ -4,6 +4,7 @@ import {
   Text,
   TextInput,
   StyleSheet,
+  Alert,
   StatusBar,
   TouchableOpacity,
   Platform,
@@ -13,43 +14,96 @@ import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import {AuthContext} from './context';
+import Users from '../models/users';
 
 const SignInScreen = ({navigation}) => {
   const [data, setData] = React.useState({
-    email: '',
+    username: '',
     password: '',
     checkTextInputChange: false,
     secureTextEntry: true,
+    isValidUser: true,
+    isValidPassword: true,
   });
 
   const {signIn} = React.useContext(AuthContext);
 
   const textInputChange = (value) => {
-    if (value.length !== 0) {
+    if (value.trim().length >= 4) {
       setData({
         ...data,
-        email: value,
+        username: value,
         checkTextInputChange: true,
+        isValidUser: true,
       });
     } else {
       setData({
         ...data,
-        email: value,
+        username: value,
         checkTextInputChange: false,
+        isValidUser: false,
       });
     }
   };
 
   const handlePasswordChange = (value) => {
-    setData({...data, password: value});
+    if (value.trim().length >= 8) {
+      setData({
+        ...data,
+        password: value,
+        isValidPassword: true,
+      });
+    } else {
+      setData({
+        ...data,
+        password: value,
+        isValidPassword: false,
+      });
+    }
   };
 
   const updateSecureTextEntry = () => {
     setData({...data, secureTextEntry: !data.secureTextEntry});
   };
 
-  const loginHandle = (username, password) => {
-    signIn(username, password);
+  const loginHandle = (userName, password) => {
+    const foundUser = Users.filter((user) => {
+      return userName === user.email;
+    });
+
+    if (data.username.length === 0 || data.password.length === 0) {
+      Alert.alert(
+        'Wrong Input!',
+        'Username or password field cannot be empty!',
+        [{text: 'Okay'}],
+      );
+      return;
+    }
+
+    if (foundUser.length === 0) {
+      Alert.alert('Invalid User!', 'Username or password is incorrect', [
+        {text: 'Okay'},
+      ]);
+      return;
+    } else {
+      signIn(foundUser);
+    }
+  };
+
+  const handleValidUser = (val) => {
+    if (val.trim().length >= 4) {
+      setData({...data, isValidUser: true});
+    } else {
+      setData({...data, isValidUser: false});
+    }
+  };
+
+  const handleValidPassword = (val) => {
+    if (val.trim().length >= 4) {
+      setData({...data, isValidPassword: true});
+    } else {
+      setData({...data, isValidPassword: false});
+    }
   };
 
   return (
@@ -59,13 +113,14 @@ const SignInScreen = ({navigation}) => {
         <Text style={styles.textHeader}>Welcome</Text>
       </View>
       <Animatable.View animation="fadeInUpBig" style={styles.footer}>
-        <Text style={styles.textFooter}>Email</Text>
+        <Text style={styles.textFooter}>Username</Text>
         <View style={styles.action}>
           <Icon name="person-outline" size={20} color="#05375a" />
           <TextInput
-            placeholder="Your email"
+            placeholder="Your username"
             autoCapitalize="none"
             onChangeText={(value) => textInputChange(value)}
+            onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
             style={styles.textInput}
           />
           {data.checkTextInputChange ? (
@@ -74,6 +129,13 @@ const SignInScreen = ({navigation}) => {
             </Animatable.View>
           ) : null}
         </View>
+        {data.isValidUser ? null : (
+          <Animatable.View animation="fadeInLeft" duration={500}>
+            <Text style={styles.errorMessage}>
+              Username must be 4 characters long
+            </Text>
+          </Animatable.View>
+        )}
         <Text style={[styles.textFooter, {marginTop: 35}]}>Password</Text>
         <View style={styles.action}>
           <Icon name="lock-closed-outline" size={20} color="#05375a" />
@@ -82,6 +144,7 @@ const SignInScreen = ({navigation}) => {
             secureTextEntry={data.secureTextEntry ? true : false}
             autoCapitalize="none"
             onChangeText={(value) => handlePasswordChange(value)}
+            onEndEditing={(e) => handleValidPassword(e.nativeEvent.text)}
             style={styles.textInput}
           />
           <TouchableOpacity onPress={updateSecureTextEntry}>
@@ -92,6 +155,13 @@ const SignInScreen = ({navigation}) => {
             />
           </TouchableOpacity>
         </View>
+        {data.isValidPassword ? null : (
+          <Animatable.View animation="fadeInLeft" duration={500}>
+            <Text style={styles.errorMessage}>
+              Password must be 8 characters long
+            </Text>
+          </Animatable.View>
+        )}
         <TouchableOpacity>
           <Text style={{color: '#009387', marginTop: 15}}>
             Forgot Password?
@@ -142,6 +212,11 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
     paddingVertical: 30,
+  },
+  errorMessage: {
+    color: 'red',
+    paddingTop: 5,
+    fontSize: 13,
   },
   textHeader: {
     color: '#fff',
